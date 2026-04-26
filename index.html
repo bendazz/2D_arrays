@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nested For Loops Practice</title>
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --ink: #1f2330;
+    --muted: #6b7280;
+    --accent: #4f46e5;
+    --accent-dark: #3730a3;
+    --good: #15803d;
+    --good-bg: #dcfce7;
+    --bad: #b91c1c;
+    --bad-bg: #fee2e2;
+    --code-bg: #0f172a;
+    --code-ink: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: white;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 6px; font-size: 28px; }
+  header p { margin: 0; opacity: 0.9; }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+  .question {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+  .question h2 {
+    margin: 0 0 6px;
+    font-size: 18px;
+  }
+  .prompt {
+    color: var(--muted);
+    margin: 0 0 12px;
+    font-size: 14px;
+  }
+  pre.code {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px;
+    margin: 0 0 14px;
+  }
+  .kw { color: #c084fc; }
+  .num { color: #fbbf24; }
+  .str { color: #86efac; }
+  .fn { color: #93c5fd; }
+  .com { color: #94a3b8; font-style: italic; }
+  textarea {
+    width: 100%;
+    min-height: 90px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    resize: vertical;
+    background: #fafafa;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: white;
+  }
+  .row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { background: var(--accent-dark); }
+  button.secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  button.secondary:hover {
+    background: var(--accent);
+    color: white;
+  }
+  .feedback {
+    flex: 1 1 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: none;
+    white-space: pre-wrap;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    color: var(--good);
+    background: var(--good-bg);
+  }
+  .feedback.incorrect {
+    color: var(--bad);
+    background: var(--bad-bg);
+  }
+  .answer-block {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--good-bg);
+    color: var(--good);
+    border-radius: 8px;
+    display: none;
+  }
+  .answer-block.show { display: block; }
+  .answer-block h3 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .answer-block pre {
+    background: white;
+    color: var(--ink);
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin: 0 0 14px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+  .trace-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .trace-table th, .trace-table td {
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+  }
+  .trace-table th {
+    background: #f3f4f6;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+  }
+  .trace-table td.muted { color: #9ca3af; }
+  .trace-note {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12px;
+    color: var(--good);
+    margin: 8px 0 4px;
+    opacity: 0.85;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 16px;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Nested For Loops Practice</h1>
+  <p>Read each program. Predict what it prints. Click Show Answer to check.</p>
+</header>
+
+<main id="quiz"></main>
+
+<footer>Trace each loop step by step before peeking at the answer.</footer>
+
+<script>
+const questions = [
+  {
+    title: "Question 1 — Pairs of numbers",
+    prompt: "What does this program print?",
+    code:
+`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+        <span class="fn">print</span>(i, j)`,
+    answer:
+`0 0
+0 1
+1 0
+1 1`,
+    trace: {
+      headers: ["Step", "i", "j", "Prints"],
+      rows: [
+        ["1", "0", "0", "0 0"],
+        ["2", "0", "1", "0 1"],
+        ["3", "1", "0", "1 0"],
+        ["4", "1", "1", "1 1"]
+      ]
+    }
+  },
+  {
+    title: "Question 2 — Counting iterations",
+    prompt: "What is the final value printed?",
+    code:
+`total = <span class="num">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+        total = total + <span class="num">1</span>
+<span class="fn">print</span>(total)`,
+    answer: `6`,
+    trace: {
+      headers: ["Step", "i", "j", "total"],
+      rows: [
+        ["start", "—", "—", "0"],
+        ["1",     "0", "0", "1"],
+        ["2",     "0", "1", "2"],
+        ["3",     "1", "0", "3"],
+        ["4",     "1", "1", "4"],
+        ["5",     "2", "0", "5"],
+        ["6",     "2", "1", "6"],
+        ["print", "—", "—", "prints 6"]
+      ]
+    }
+  },
+  {
+    title: "Question 3 — Printing the inner counter",
+    prompt: "What does this program print?",
+    code:
+`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
+        <span class="fn">print</span>(j)`,
+    answer:
+`0
+1
+2
+0
+1
+2`,
+    trace: {
+      headers: ["Step", "i", "j", "Prints"],
+      rows: [
+        ["1", "0", "0", "0"],
+        ["2", "0", "1", "1"],
+        ["3", "0", "2", "2"],
+        ["4", "1", "0", "0"],
+        ["5", "1", "1", "1"],
+        ["6", "1", "2", "2"]
+      ]
+    }
+  },
+  {
+    title: "Question 4 — Adding the counters",
+    prompt: "What does this program print?",
+    code:
+`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+        <span class="fn">print</span>(i + j)`,
+    answer:
+`0
+1
+1
+2
+2
+3`,
+    trace: {
+      headers: ["Step", "i", "j", "Prints"],
+      rows: [
+        ["1", "0", "0", "0"],
+        ["2", "0", "1", "1"],
+        ["3", "1", "0", "1"],
+        ["4", "1", "1", "2"],
+        ["5", "2", "0", "2"],
+        ["6", "2", "1", "3"]
+      ]
+    }
+  },
+  {
+    title: "Question 5 — When the inner range depends on the outer",
+    prompt: "What does this program print?",
+    code:
+`<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">4</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i):
+        <span class="fn">print</span>(i)`,
+    answer:
+`1
+2
+2
+3
+3
+3`,
+    trace: {
+      headers: ["Step", "i", "j", "Prints"],
+      rows: [
+        ["1", "1", "0", "1"],
+        ["2", "2", "0", "2"],
+        ["3", "2", "1", "2"],
+        ["4", "3", "0", "3"],
+        ["5", "3", "1", "3"],
+        ["6", "3", "2", "3"]
+      ]
+    }
+  }
+];
+
+function renderTrace(trace) {
+  if (!trace) return "";
+  const head = trace.headers.map(h => `<th>${h}</th>`).join("");
+  const body = trace.rows.map(row =>
+    "<tr>" + row.map(cell => {
+      const muted = (cell === "—") ? " class=\"muted\"" : "";
+      return `<td${muted}>${cell}</td>`;
+    }).join("") + "</tr>"
+  ).join("");
+  return `
+    <p class="trace-note">Trace table — one row per step:</p>
+    <table class="trace-table">
+      <thead><tr>${head}</tr></thead>
+      <tbody>${body}</tbody>
+    </table>
+  `;
+}
+
+function buildQuestion(q, idx) {
+  const card = document.createElement("section");
+  card.className = "question";
+  card.innerHTML = `
+    <h2>${q.title}</h2>
+    <p class="prompt">${q.prompt}</p>
+    <pre class="code">${q.code}</pre>
+    <div class="row">
+      <button data-action="show" data-idx="${idx}">Show Answer</button>
+      <button class="secondary" data-action="hide" data-idx="${idx}" style="display:none;">Hide Answer</button>
+    </div>
+    <div class="answer-block" id="ans-${idx}">
+      <h3>Expected output</h3>
+      <pre>${q.answer}</pre>
+      ${renderTrace(q.trace)}
+    </div>
+  `;
+  return card;
+}
+
+const quiz = document.getElementById("quiz");
+questions.forEach((q, i) => quiz.appendChild(buildQuestion(q, i)));
+
+quiz.addEventListener("click", (e) => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  const idx = Number(btn.dataset.idx);
+  const action = btn.dataset.action;
+  const ansBlock = document.getElementById(`ans-${idx}`);
+  const showBtn = quiz.querySelector(`button[data-action="show"][data-idx="${idx}"]`);
+  const hideBtn = quiz.querySelector(`button[data-action="hide"][data-idx="${idx}"]`);
+
+  if (action === "show") {
+    ansBlock.classList.add("show");
+    showBtn.style.display = "none";
+    hideBtn.style.display = "inline-block";
+  } else if (action === "hide") {
+    ansBlock.classList.remove("show");
+    hideBtn.style.display = "none";
+    showBtn.style.display = "inline-block";
+  }
+});
+</script>
+</body>
+</html>
